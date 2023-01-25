@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Windows;
 
 namespace Software_Developer_Ilan
 {
@@ -27,8 +28,9 @@ namespace Software_Developer_Ilan
             pgsqlConnection = new NpgsqlConnection(ConnString);
             pgsqlConnection.Open();
 
-            string consultaStatusEmpresas = @"SELECT DISTINCT STATUS
-                                              FROM PRESTACAOSERVICO";
+            string consultaStatusEmpresas = @"SELECT DISTINCT UPPER(STATUS) AS STATUS
+                                              FROM PRESTACAOSERVICO
+                                              ORDER BY 1";
 
             NpgsqlDataAdapter Adpt = new NpgsqlDataAdapter(consultaStatusEmpresas, pgsqlConnection);
             Adpt.Fill(dataTable);
@@ -41,36 +43,71 @@ namespace Software_Developer_Ilan
             pgsqlConnection = new NpgsqlConnection(ConnString);
             pgsqlConnection.Open();
 
-            string consultaEnquadramento = @"SELECT DISTINCT ENQUADRAMENTO 
-                                                FROM EMPRESAS";
+            string consultaEnquadramento = @"SELECT DISTINCT UPPER(ENQUADRAMENTO) AS ENQUADRAMENTO
+                                                FROM EMPRESAS
+                                                ORDER BY 1";
 
             NpgsqlDataAdapter Adpt = new NpgsqlDataAdapter(consultaEnquadramento, pgsqlConnection);
             Adpt.Fill(dataTable);
             return dataTable;
         }
 
-        public IEnumerable<Empresas> GetEmpresas(string status, string enquadramento)
+        public DataTable GetCidades()
         {
             DataTable dataTable = new DataTable();
             pgsqlConnection = new NpgsqlConnection(ConnString);
             pgsqlConnection.Open();
 
-            string consultaEmpresa = @"SELECT empresas.codigoempresa, empresas.filial, empresas.nomeempresa, empresas.enquadramento, prestacaoservico.status
+            string consultaEnquadramento = @"SELECT DISTINCT UPPER(CIDADE) AS CIDADE
+                                                FROM EMPRESAS
+                                                WHERE CIDADE <> '' AND CIDADE <> ' '
+                                                ORDER BY 1";
+
+            NpgsqlDataAdapter Adpt = new NpgsqlDataAdapter(consultaEnquadramento, pgsqlConnection);
+            Adpt.Fill(dataTable);
+            return dataTable;
+        }
+
+        public IEnumerable<Empresas> GetEmpresas(string status, string enquadramento, string cidade)
+        {
+            DataTable dataTable = new DataTable();
+            pgsqlConnection = new NpgsqlConnection(ConnString);
+            pgsqlConnection.Open();
+
+            string consultaEmpresa = @"SELECT empresas.codigoempresa, empresas.filial, empresas.nomeempresa, UPPER(empresas.enquadramento), UPPER(prestacaoservico.status), UPPER(empresas.cidade)
                                         FROM empresas 
                                         INNER JOIN prestacaoservico on empresas.idempresa = prestacaoservico.idempresa ";
 
-            if (status != "<Todos>" && enquadramento != "<Todos>")
+            if (status != "<Todos>" && enquadramento != "<Todos>" && cidade != "<Todas>")
             {
-                consultaEmpresa += $@"WHERE prestacaoservico.status = '{status}' AND empresas.enquadramento = '{enquadramento}' ";
+                consultaEmpresa += $@"WHERE UPPER(prestacaoservico.status) = '{status}' AND UPPER(empresas.enquadramento) = '{enquadramento}' AND empresas.cidade LIKE '%{cidade}' ";
             }
-            else if (status != "<Todos>" && enquadramento == "<Todos>")
+            else if (status != "<Todos>" && cidade != "<Todas>" && enquadramento == "<Todos>")
             {
-                consultaEmpresa += $@"WHERE prestacaoservico.status = '{status}' ";
+                consultaEmpresa += $@"WHERE UPPER(prestacaoservico.status) = '{status}' AND UPPER(empresas.cidade) = '{cidade}' ";
             }
-            else if (status == "<Todos>" && enquadramento != "<Todos>")
+            else if (status != "<Todos>" && cidade == "<Todas>" && enquadramento == "<Todos>")
             {
-                consultaEmpresa += $@"WHERE empresas.enquadramento = '{enquadramento}' ";
+                consultaEmpresa += $@"WHERE UPPER(prestacaoservico.status) = '{status}' ";
             }
+            else if (status == "<Todos>" && cidade != "<Todas>" && enquadramento == "<Todos>")
+            {
+                consultaEmpresa += $@"WHERE UPPER(empresas.cidade) = '{cidade}' ";
+            }
+            else if (status == "<Todos>" && cidade == "<Todas>" && enquadramento != "<Todos>")
+            {
+                consultaEmpresa += $@"WHERE UPPER(empresas.enquadramento) = '{enquadramento}' ";
+            }
+            else if (status != "<Todos>" && cidade == "<Todas>" && enquadramento != "<Todos>")
+            {
+                consultaEmpresa += $@"WHERE  UPPER(empresas.enquadramento) = '{enquadramento}' AND UPPER(prestacaoservico.status) = '{status}' ";
+            }
+            else if(status == "<Todos>" && cidade != "<Todas>" && enquadramento != "<Todos>")
+            {
+                consultaEmpresa += $@"WHERE UPPER(empresas.cidade) = '{cidade}' AND UPPER(empresas.enquadramento) = '{enquadramento}' ";
+            }
+            
+            
 
             consultaEmpresa += "ORDER BY 1, 2 ";
 
@@ -87,7 +124,8 @@ namespace Software_Developer_Ilan
                     Filial = (int)dataTable.Rows[i][1],
                     NomeEmpresa = dataTable.Rows[i][2].ToString(),
                     Enquadramento = dataTable.Rows[i][3].ToString(),
-                    Status = dataTable.Rows[i][4].ToString()
+                    Status = dataTable.Rows[i][4].ToString(),
+                    Cidade = string.IsNullOrEmpty(dataTable.Rows[i][5].ToString()) ? "Não informado" : dataTable.Rows[i][5].ToString()
                 };
                 empresas.Add(empresa);
             }

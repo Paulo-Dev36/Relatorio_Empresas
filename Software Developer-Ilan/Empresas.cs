@@ -7,5 +7,6 @@
         public string NomeEmpresa { get; set; }
         public string Enquadramento { get; set; }
         public string Status { get; set; }
+        public string Cidade { get; set; }
     }
 }
