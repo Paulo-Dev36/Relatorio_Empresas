@@ -16,6 +16,7 @@ namespace Software_Developer_Ilan
         static readonly string dataBase = @"wlvalidador";
 
         public int QuantidadeEmpresas { get; set; }
+        public List<Empresas> ListaEmpresas { get; set; }
 
         readonly string ConnString = $@"Server={serverName};Port={port};User Id={userName};Password={password};Database={dataBase};";
 
@@ -130,6 +131,8 @@ namespace Software_Developer_Ilan
                 empresas.Add(empresa);
             }
             QuantidadeEmpresas = empresas.Count;
+            ListaEmpresas = empresas;
+
             return empresas;
         }
     }

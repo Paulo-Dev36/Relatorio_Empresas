@@ -49,10 +49,25 @@
             this.timerHoras = new System.Windows.Forms.Timer(this.components);
             this.comboBoxMunicipio = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label9 = new System.Windows.Forms.Label();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.checkBoxDuracao = new System.Windows.Forms.CheckBox();
+            this.checkBoxDataFechamento = new System.Windows.Forms.CheckBox();
+            this.checkBoxDataAbertura = new System.Windows.Forms.CheckBox();
+            this.checkBoxTipoAtendimento = new System.Windows.Forms.CheckBox();
+            this.checkBoxSolicitante = new System.Windows.Forms.CheckBox();
+            this.checkBoxIdAtendimento = new System.Windows.Forms.CheckBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.comboBoxOrdenar = new System.Windows.Forms.ComboBox();
             this.tabControl2.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvEmpresas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
+            this.tabPage1.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.panel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -130,6 +145,7 @@
             this.tabControl2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl2.Controls.Add(this.tabPage2);
+            this.tabControl2.Controls.Add(this.tabPage1);
             this.tabControl2.Location = new System.Drawing.Point(16, 130);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
@@ -226,6 +242,7 @@
             this.btnPDF.TabIndex = 12;
             this.btnPDF.Text = "Emitir PDF";
             this.btnPDF.UseVisualStyleBackColor = false;
+            this.btnPDF.Click += new System.EventHandler(this.btnPDF_Click);
             // 
             // labelHoras
             // 
@@ -264,6 +281,140 @@
             this.label5.TabIndex = 14;
             this.label5.Text = "Município:";
             // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.label10);
+            this.tabPage1.Controls.Add(this.panel3);
+            this.tabPage1.Controls.Add(this.label9);
+            this.tabPage1.Controls.Add(this.panel2);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(896, 248);
+            this.tabPage1.TabIndex = 1;
+            this.tabPage1.Text = "Opções de emissão";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Bahnschrift SemiCondensed", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(13, 21);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(146, 18);
+            this.label9.TabIndex = 29;
+            this.label9.Text = "Colounas relatório PDF:";
+            // 
+            // panel2
+            // 
+            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.checkBoxDuracao);
+            this.panel2.Controls.Add(this.checkBoxDataFechamento);
+            this.panel2.Controls.Add(this.checkBoxDataAbertura);
+            this.panel2.Controls.Add(this.checkBoxTipoAtendimento);
+            this.panel2.Controls.Add(this.checkBoxSolicitante);
+            this.panel2.Controls.Add(this.checkBoxIdAtendimento);
+            this.panel2.Location = new System.Drawing.Point(22, 31);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(200, 170);
+            this.panel2.TabIndex = 30;
+            // 
+            // checkBoxDuracao
+            // 
+            this.checkBoxDuracao.AutoSize = true;
+            this.checkBoxDuracao.Location = new System.Drawing.Point(6, 120);
+            this.checkBoxDuracao.Name = "checkBoxDuracao";
+            this.checkBoxDuracao.Size = new System.Drawing.Size(73, 17);
+            this.checkBoxDuracao.TabIndex = 34;
+            this.checkBoxDuracao.Text = "Município";
+            this.checkBoxDuracao.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxDataFechamento
+            // 
+            this.checkBoxDataFechamento.AutoSize = true;
+            this.checkBoxDataFechamento.Location = new System.Drawing.Point(6, 102);
+            this.checkBoxDataFechamento.Name = "checkBoxDataFechamento";
+            this.checkBoxDataFechamento.Size = new System.Drawing.Size(56, 17);
+            this.checkBoxDataFechamento.TabIndex = 33;
+            this.checkBoxDataFechamento.Text = "Status";
+            this.checkBoxDataFechamento.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxDataAbertura
+            // 
+            this.checkBoxDataAbertura.AutoSize = true;
+            this.checkBoxDataAbertura.Location = new System.Drawing.Point(6, 84);
+            this.checkBoxDataAbertura.Name = "checkBoxDataAbertura";
+            this.checkBoxDataAbertura.Size = new System.Drawing.Size(101, 17);
+            this.checkBoxDataAbertura.TabIndex = 32;
+            this.checkBoxDataAbertura.Text = "Enquadramento";
+            this.checkBoxDataAbertura.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxTipoAtendimento
+            // 
+            this.checkBoxTipoAtendimento.AutoSize = true;
+            this.checkBoxTipoAtendimento.Location = new System.Drawing.Point(6, 66);
+            this.checkBoxTipoAtendimento.Name = "checkBoxTipoAtendimento";
+            this.checkBoxTipoAtendimento.Size = new System.Drawing.Size(98, 17);
+            this.checkBoxTipoAtendimento.TabIndex = 31;
+            this.checkBoxTipoAtendimento.Text = "Nome Empresa";
+            this.checkBoxTipoAtendimento.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxSolicitante
+            // 
+            this.checkBoxSolicitante.AutoSize = true;
+            this.checkBoxSolicitante.Location = new System.Drawing.Point(6, 48);
+            this.checkBoxSolicitante.Name = "checkBoxSolicitante";
+            this.checkBoxSolicitante.Size = new System.Drawing.Size(46, 17);
+            this.checkBoxSolicitante.TabIndex = 30;
+            this.checkBoxSolicitante.Text = "Filial";
+            this.checkBoxSolicitante.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxIdAtendimento
+            // 
+            this.checkBoxIdAtendimento.AutoSize = true;
+            this.checkBoxIdAtendimento.Location = new System.Drawing.Point(6, 30);
+            this.checkBoxIdAtendimento.Name = "checkBoxIdAtendimento";
+            this.checkBoxIdAtendimento.Size = new System.Drawing.Size(103, 17);
+            this.checkBoxIdAtendimento.TabIndex = 29;
+            this.checkBoxIdAtendimento.Text = "Codigo Empresa";
+            this.checkBoxIdAtendimento.UseVisualStyleBackColor = true;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Bahnschrift SemiCondensed", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Location = new System.Drawing.Point(268, 21);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(88, 18);
+            this.label10.TabIndex = 38;
+            this.label10.Text = "Ordernar por:";
+            // 
+            // panel3
+            // 
+            this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel3.Controls.Add(this.comboBoxOrdenar);
+            this.panel3.Location = new System.Drawing.Point(276, 31);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(208, 50);
+            this.panel3.TabIndex = 39;
+            // 
+            // comboBoxOrdenar
+            // 
+            this.comboBoxOrdenar.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxOrdenar.Font = new System.Drawing.Font("Bahnschrift SemiCondensed", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBoxOrdenar.FormattingEnabled = true;
+            this.comboBoxOrdenar.Items.AddRange(new object[] {
+            "Codigo Empresa",
+            "Filial",
+            "Nome Empresa",
+            "Enquadramento",
+            "Status",
+            "Município"});
+            this.comboBoxOrdenar.Location = new System.Drawing.Point(13, 14);
+            this.comboBoxOrdenar.Name = "comboBoxOrdenar";
+            this.comboBoxOrdenar.Size = new System.Drawing.Size(170, 22);
+            this.comboBoxOrdenar.TabIndex = 27;
+            // 
             // frmInformacoesEmpresas
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -293,6 +444,11 @@
             this.tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvEmpresas)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            this.panel3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -319,6 +475,18 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.DataGridView dgvEmpresas;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.CheckBox checkBoxDuracao;
+        private System.Windows.Forms.CheckBox checkBoxDataFechamento;
+        private System.Windows.Forms.CheckBox checkBoxDataAbertura;
+        private System.Windows.Forms.CheckBox checkBoxTipoAtendimento;
+        private System.Windows.Forms.CheckBox checkBoxSolicitante;
+        private System.Windows.Forms.CheckBox checkBoxIdAtendimento;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.ComboBox comboBoxOrdenar;
     }
 }
 

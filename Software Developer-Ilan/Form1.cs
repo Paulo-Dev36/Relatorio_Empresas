@@ -1,11 +1,18 @@
-﻿using Microsoft.Office.Interop.Excel;
+﻿using iTextSharp.text;
+using iTextSharp.text.pdf;
+using Microsoft.Office.Interop.Excel;
+using RelatoriosAtendimento;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using DataTable = System.Data.DataTable;
 using Excel = Microsoft.Office.Interop.Excel;
+using Fonte = iTextSharp.text.Font;
 
 namespace Software_Developer_Ilan
 {
@@ -13,6 +20,8 @@ namespace Software_Developer_Ilan
     {
         private RepositorioEmpresas repositorioEmpresas = new RepositorioEmpresas();
         readonly DataTable dataTable = new DataTable();
+        public int TotalPaginas = 1;
+        public string OrdernarPor { get; set; }
         public frmInformacoesEmpresas()
         {
             InitializeComponent();
@@ -24,6 +33,7 @@ namespace Software_Developer_Ilan
             CarregaStatusEmpresa();
             CarregaEnquadramento();
             CarregaCidades();
+            SelecionaTodasColunas();
         }
 
         private void CarregaStatusEmpresa()
@@ -198,6 +208,168 @@ namespace Software_Developer_Ilan
                 return false;
             }
             return true;
+        }
+
+        private void btnPDF_Click(object sender, EventArgs e)
+        {
+            if (!PossuiItemNaGrid())
+            {
+                return;
+            }
+
+            if (repositorioEmpresas.QuantidadeEmpresas > 18)
+                TotalPaginas += (int)Math.Ceiling(
+                    (repositorioEmpresas.QuantidadeEmpresas - 18) / 20F);
+
+            bool[] colunasSelecionadas = { checkBoxIdAtendimento.Checked, checkBoxSolicitante.Checked, checkBoxTipoAtendimento.Checked,
+                    checkBoxDataAbertura.Checked, checkBoxDataFechamento.Checked, checkBoxDuracao.Checked};
+
+            float[] colunas = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+
+            BaseFont fonteBase = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, false);
+            Document documento = new Document(PageSize.A4);
+            documento.SetMargins(40, 40, 80, 40);
+            documento.AddCreationDate();
+
+            string caminhoArquivo = $@"{Path.GetTempFileName()}" + "relatorio.pdf";
+
+            PdfWriter writer = PdfWriter.GetInstance(documento, new FileStream(caminhoArquivo, FileMode.Create));
+            writer.PageEvent = new EventosPagina(TotalPaginas);
+            documento.Open();
+
+            Paragraph titulo = new Paragraph();
+            titulo.Font = new Fonte(Fonte.FontFamily.TIMES_ROMAN, 16);
+            titulo.Alignment = Element.ALIGN_CENTER;
+            titulo.Add("RELATÓRIO DE EMPRESAS\n \n \n");
+
+            PdfPTable tabela = new PdfPTable(6);
+
+            if (colunasSelecionadas[0])
+            {
+                colunas[0] = 0.8f;
+            }
+            if (colunasSelecionadas[1])
+            {
+                colunas[1] = 0.8f;
+            }
+            if (colunasSelecionadas[2])
+            {
+                colunas[2] = 2.0f;
+            }
+            if (colunasSelecionadas[3])
+            {
+                colunas[3] = 1.2f;
+            }
+            if (colunasSelecionadas[4])
+            {
+                colunas[4] = 1.2f;
+            }
+            if (colunasSelecionadas[5])
+            {
+                colunas[5] = 1.1f;
+            }
+
+            float[] larguraColunas = { colunas[0], colunas[1], colunas[2], colunas[3], colunas[4],
+                colunas[5] };
+
+            tabela.SetWidths(larguraColunas);
+            tabela.DefaultCell.BorderWidth = 0;
+            tabela.WidthPercentage = 100;
+
+            CriarCelulaTexto(tabela, "Cód. Empresa", 9, true);
+            CriarCelulaTexto(tabela, "Filial", 9, true);
+            CriarCelulaTexto(tabela, "Nome Empresa", 9, true);
+            CriarCelulaTexto(tabela, "Enquadramento", 9, true);
+            CriarCelulaTexto(tabela, "Status", 9, true);
+            CriarCelulaTexto(tabela, "Município", 9, true);
+
+            OrdernarPor = comboBoxOrdenar.Text;
+            List<Empresas> listaEmpresas = repositorioEmpresas.ListaEmpresas;
+
+            if (OrdernarPor == "Codigo Empresa")
+            {
+                listaEmpresas = listaEmpresas.OrderBy(x => x.CodigoEmpresa).ToList();
+            }
+            else if (OrdernarPor == "Nome Empresa")
+            {
+                listaEmpresas = listaEmpresas.OrderBy(x => x.NomeEmpresa).ToList();
+            }
+            else if (OrdernarPor == "Enquadramento")
+            {
+                listaEmpresas = listaEmpresas.OrderBy(x => x.Enquadramento).ToList();
+            }
+            else if (OrdernarPor == "Status")
+            {
+                listaEmpresas = listaEmpresas.OrderBy(x => x.Status).ToList();
+            }
+            else if (OrdernarPor == "Município")
+            {
+                listaEmpresas = listaEmpresas.OrderBy(x => x.Cidade).ToList();
+            }
+
+            foreach (Empresas atendimento in listaEmpresas)
+            {
+                CriarCelulaTexto(tabela, atendimento.CodigoEmpresa.ToString(), 8, false);
+                CriarCelulaTexto(tabela, atendimento.Filial.ToString(), 8, false);
+                CriarCelulaTexto(tabela, atendimento.NomeEmpresa.ToString(), 8, false);
+                CriarCelulaTexto(tabela, atendimento.Enquadramento.ToString(), 8, false);
+                CriarCelulaTexto(tabela, atendimento.Status.ToString(), 8, false);
+                CriarCelulaTexto(tabela, atendimento.Cidade.ToString(), 7, false);
+            };
+
+            documento.Add(titulo);
+            documento.Add(tabela);
+            documento.Close();
+
+            System.Diagnostics.Process.Start(caminhoArquivo);
+        }
+        private static void CriarCelulaTexto(PdfPTable tabela, string texto, int tamanhoFonte, bool negrito,
+            int alinhamentoHoriz = PdfPCell.ALIGN_LEFT, bool italico = false, int alturaCelula = 35)
+        {
+            {
+                int estilo = Fonte.NORMAL;
+                if (negrito && italico)
+                {
+                    estilo = Fonte.BOLDITALIC;
+                }
+                else if (negrito)
+                {
+                    estilo = Fonte.BOLD;
+                }
+                else if (italico)
+                {
+                    estilo = Fonte.ITALIC;
+                }
+
+                BaseFont fonteBase = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, false);
+                Fonte fonte = new Fonte(fonteBase, tamanhoFonte,
+                    estilo, BaseColor.BLACK);
+
+                var bgColor = BaseColor.WHITE;
+                if (tabela.Rows.Count % 2 == 1)
+                    bgColor = new BaseColor(0.95f, 0.95f, 0.95f);
+
+                PdfPCell celula = new PdfPCell(new Phrase(texto, fonte))
+                {
+                    HorizontalAlignment = alinhamentoHoriz,
+                    VerticalAlignment = Element.ALIGN_MIDDLE,
+                    Border = 0,
+                    BorderWidthBottom = 1,
+                    FixedHeight = alturaCelula,
+                    BackgroundColor = bgColor
+                };
+                tabela.AddCell(celula);
+            }
+        }
+
+        private void SelecionaTodasColunas()
+        {
+            checkBoxIdAtendimento.Checked = true;
+            checkBoxSolicitante.Checked = true;
+            checkBoxTipoAtendimento.Checked = true;
+            checkBoxDataAbertura.Checked = true;
+            checkBoxDataFechamento.Checked = true;
+            checkBoxDuracao.Checked = true;
         }
     }
 }
